@@ -91,7 +91,8 @@ static func step_up(body : CharacterBody3D, collider : CollisionShape3D, max_ste
 	
 	var body_test_result = PhysicsTestMotionResult3D.new()
 	var body_test_params = PhysicsTestMotionParameters3D.new()
-	
+	var floor_plane : = Plane(body.get_floor_normal())
+
 	# colision projections will go forward 1/4 the width of the collider
 	var vel_normalized : Vector3 = body.velocity.normalized()
 	var collider_width : float = 0.0
@@ -99,11 +100,10 @@ static func step_up(body : CharacterBody3D, collider : CollisionShape3D, max_ste
 		collider_width = collider.shape.radius / 2.0
 	elif "size" in collider.shape:
 		collider_width = (collider.shape.size.z / 2.0) / 2.0
-		
+
+	# project motion along floor normal #
 	body_test_params.from = body.global_transform
-	body_test_params.motion = vel_normalized * collider_width
-	body_test_params.motion.y = 0.0 # remove gravity to project straight forward
-	
+	body_test_params.motion = floor_plane.project(vel_normalized * collider_width)
 	
 	# project forward #
 	if !PhysicsServer3D.body_test_motion(body.get_rid(), body_test_params, body_test_result):
