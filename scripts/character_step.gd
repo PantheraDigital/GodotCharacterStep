@@ -38,11 +38,11 @@ class_name CharacterStep3D
 ## Returns a global position for the CharacterBody3D to move to. 
 ##   The position is either a found suitable location to “step down” to, 
 ##   or the CharacterBody3D’s current global_position indicating no movement can be taken.
-static func step_down(body : CharacterBody3D, collider : CollisionShape3D, max_step_height : float) -> Vector3:
+static func step_down(body : CharacterBody3D, collider : CollisionShape3D, max_step_height : float, direction : Vector3 = Vector3.INF) -> Vector3:
 	var body_test_result = PhysicsTestMotionResult3D.new()
 	var body_test_params = PhysicsTestMotionParameters3D.new()
 	
-	var vel_normalized : Vector3 = body.velocity.normalized()
+	var vel_normalized : Vector3 = direction if (!direction.is_equal_approx(Vector3.INF)) else body.velocity.normalized()
 	# colision projections will go forward 1/4 the width of the collider
 	var collider_width : float = 0.0
 	if "radius" in collider.shape:
@@ -85,7 +85,7 @@ static func step_down(body : CharacterBody3D, collider : CollisionShape3D, max_s
 ## Returns a global position for the CharacterBody3D to move to. 
 ##    The position is either a found suitable location to “step up” to, 
 ##    or the CharacterBody3D’s current global_position indicating no movement can be taken.
-static func step_up(body : CharacterBody3D, collider : CollisionShape3D, max_step_height : float) -> Vector3:
+static func step_up(body : CharacterBody3D, collider : CollisionShape3D, max_step_height : float, direction : Vector3 = Vector3.INF) -> Vector3:
 	if body.velocity.is_zero_approx():
 		return body.global_position
 	
@@ -93,7 +93,7 @@ static func step_up(body : CharacterBody3D, collider : CollisionShape3D, max_ste
 	var body_test_params = PhysicsTestMotionParameters3D.new()
 	
 	# colision projections will go forward 1/4 the width of the collider
-	var vel_normalized : Vector3 = body.velocity.normalized()
+	var vel_normalized : Vector3 = direction if (!direction.is_equal_approx(Vector3.INF)) else body.velocity.normalized()
 	var collider_width : float = 0.0
 	if "radius" in collider.shape:
 		collider_width = collider.shape.radius / 2.0
