@@ -35,6 +35,8 @@ class_name CharacterStep3D
 ## Project the CharacterBody3D down to find suitable ground to “step down” to.
 ## Place AFTER CharacterBody3D.move_and_slide()
 ##
+## Uses CharacterBody3D velocity to determine projection direction, unless direction argument is set (use a normalized vector)
+##
 ## Returns a global position for the CharacterBody3D to move to. 
 ##   The position is either a found suitable location to “step down” to, 
 ##   or the CharacterBody3D’s current global_position indicating no movement can be taken.
@@ -81,6 +83,8 @@ static func step_down(body : CharacterBody3D, collider : CollisionShape3D, max_s
 
 ## Project the CharacterBody3D up and over a ledge to find suitable ground to “step up” to.
 ## Place BEFORE CharacterBody3D.move_and_slide()
+##
+## Uses CharacterBody3D velocity to determine projection direction, unless direction argument is set (use a normalized vector)
 ## 
 ## Returns a global position for the CharacterBody3D to move to. 
 ##    The position is either a found suitable location to “step up” to, 
