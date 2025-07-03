@@ -5,6 +5,16 @@ Go to [Scripts/character_step.gd](https://github.com/PantheraDigital/GodotCharac
 
 Play the demo here: https://pantheraonline.itch.io/godot-characterstep-demo
 
+
+
+https://github.com/user-attachments/assets/9c2834e0-623b-409f-9874-5603fcfb5348
+
+
+
+https://github.com/user-attachments/assets/32aec206-cc72-4d67-9d82-e5840932d47a
+
+
+
 ## Purpose: 
 This static class helps CharacterBody3D objects ascend and descend ledges such as stairs.
 PhysicsServer3D.body_test_motion() is used to project the character as if they were 
