@@ -6,13 +6,15 @@
 radius = 0.375
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3vyb7"]
-albedo_color = Color(0.429667, 0.41, 1, 1)
+transparency = 1
+albedo_color = Color(0.429667, 0.41, 1, 0.368627)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_4flbx"]
 material = SubResource("StandardMaterial3D_3vyb7")
 radius = 0.375
 
 [node name="CharacterBody3D" type="CharacterBody3D"]
+floor_constant_speed = true
 script = ExtResource("1_4flbx")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

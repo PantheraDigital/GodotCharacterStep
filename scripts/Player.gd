@@ -54,14 +54,40 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 	
+	
+	var perform_step := false
+	if !move_direction.is_zero_approx():
+		# set up variables
+		var start : Vector3 = Vector3(global_position.x, global_position.y - (_collision_shape_3d.shape.height / 2), global_position.z)
+		var start_offset : Vector3 = Vector3.ZERO
+		var direction : Vector3 = Vector3(velocity.x, 0.0, velocity.z).normalized()
+		var width : float = _collision_shape_3d.shape.radius * 0.5
+		var full_width : float = width + _collision_shape_3d.shape.radius
+		# perform ray casts
+		var center_result = CharacterStep3D.snapped_intersect_ray(get_world_3d().direct_space_state, start, direction, full_width, false, [self])
+		start_offset = ((direction.rotated(Vector3.UP, deg_to_rad(90))).normalized() * width)
+		var left_result = CharacterStep3D.snapped_intersect_ray(get_world_3d().direct_space_state, start + start_offset, direction, full_width, false, [self])
+		start_offset = ((direction.rotated(Vector3.UP, deg_to_rad(-90))).normalized() * width)
+		var right_result = CharacterStep3D.snapped_intersect_ray(get_world_3d().direct_space_state, start + start_offset, direction, full_width, false, [self])
+		# process results
+		if center_result.has("normal"):
+			perform_step = center_result.normal.angle_to(Vector3.UP) > floor_max_angle
+		elif left_result.has("normal"):
+			perform_step = left_result.normal.angle_to(Vector3.UP) > floor_max_angle
+		elif right_result.has("normal"):
+			perform_step = right_result.normal.angle_to(Vector3.UP) > floor_max_angle
+		elif center_result.has("error") and left_result.has("error") and right_result.has("error") and get_floor_normal().angle_to(Vector3.UP) <= floor_max_angle:
+			# trigger step if all rays fail
+			# this is good for small steps 
+			perform_step = true
+			
 	# step_up should come BEFORE move_and_slide
 	# move_and_slide will smooth the movement of the character after step_up
-	if !move_direction.is_zero_approx():
-		var step : Vector3 = CharacterStep3D.step_up(self, _collision_shape_3d, MAX_STEP_UP)
-		if step != global_position:
-			global_position = step
-			# alternate usage
-			#global_position.y = step.y
+	if !move_direction.is_zero_approx() and perform_step:
+		var step : Dictionary = CharacterStep3D.step_up(self, _collision_shape_3d, MAX_STEP_UP)
+		if step and step["normal"].angle_to(Vector3.UP) <= floor_max_angle:
+			# center point of player is in the middle so we need to raise it half of its height to align the bottom to the ground
+			global_position.y = step["point"].y + (_collision_shape_3d.shape.height / 2)
 	
 	move_and_slide()
 	
