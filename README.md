@@ -15,28 +15,20 @@ https://github.com/user-attachments/assets/32aec206-cc72-4d67-9d82-e5840932d47a
 
 
 
-## Purpose: 
+## Purpose:
 This static class helps CharacterBody3D objects ascend and descend ledges such as stairs.
-PhysicsServer3D.body_test_motion() is used to project the character as if they were 
-moving up the ledge to test for collision. Then either a clear position is returned 
-or the CharacterBody3D’s original position, where the body was before the projection, 
-is returned to indicate the ledge can not be ascended or descended.
-
+ 
+ 
 ## Usage:
-Be sure to utilize these methods within the CharacterBody3D’s _physics_process() 
-and to use if statements to reduce the number of unnecessary calls. 
-For step_up I recommend at least preventing calls if not moving.
-For step_down I recommend having a was_on_floor bool, in a leading if statement as well 
-as calling when velocity.y <= 0 and not is_on_floor(). 
-was_on_floor should be set to is_on_floor() at the beginning of _physics_process() 
-to determine if the CharacterBody3D was on a floor before it was moved.
+Be sure to utilize these methods within the CharacterBody3D’s _physics_process() and to limit step_down and step_up calls when possible.
+For example they don't need to be called if not moving. step_down() does not need to be called unless the CharacterBody3D is falling.
+step_up() does not need to be called unless there is a wall/unwalkable surface in front of CharacterBody3D.
 
 step_up should come BEFORE move_and_slide \
-move_and_slide will smooth the movement of the character after step_up
+It is designed to look ahead be used before applying movement to the character.
 
 step_down should come AFTER move_and_slide \
-this is because if the player is not grounded but they were grounded before they moved
-then they have stepped off a ledge and it should be checked if they can step_down
+It is designed to fix character position after movement has been applied.
  
  
 ## Inspired by Godot: Stair-stepping Demo addon 
